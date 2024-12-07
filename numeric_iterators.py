@@ -3,7 +3,7 @@ import scipy
 from abc import ABC, abstractmethod
 
 
-class NumericIntegrator(ABC):
+class NumericIterator(ABC):
     def __init__(self, system):
         self.system=system
     
@@ -11,7 +11,7 @@ class NumericIntegrator(ABC):
     def iterate_until(self, t_end):
         pass
 
-class ExplicitEuler(NumericIntegrator):
+class ExplicitEuler(NumericIterator):
     def __init__(self, system, dt=0.01):
         super().__init__(system)
         self.dt=dt
@@ -25,7 +25,7 @@ class ExplicitEuler(NumericIntegrator):
         while self.system.t<=t_end:
             self.step()
 
-class ImplicitEuler(NumericIntegrator):
+class ImplicitEuler(NumericIterator):
     def __init__(self, system, dt=0.01):
         super().__init__(system)
         self.dt=dt
@@ -40,7 +40,7 @@ class ImplicitEuler(NumericIntegrator):
         while self.system.t<=t_end:
             self.step()
         
-class RK2(NumericIntegrator):
+class RK2(NumericIterator):
     def __init__(self, system, dt=0.01):
         super().__init__(system)
         self.dt=dt
@@ -56,7 +56,7 @@ class RK2(NumericIntegrator):
         while self.system.t<=t_end:
             self.step()
 
-class RK4(NumericIntegrator):
+class RK4(NumericIterator):
     def __init__(self, system, dt=0.01):
         super().__init__(system)
         self.dt=dt
@@ -74,7 +74,7 @@ class RK4(NumericIntegrator):
         while self.system.t<=t_end:
             self.step()
 
-class RKF(NumericIntegrator):
+class RKF(NumericIterator):
     def __init__(self, system, tol=1e-6, dt_min=1e-8, dt_max=0.01):
         super().__init__(system)
         self.tol=tol
@@ -87,7 +87,7 @@ class RKF(NumericIntegrator):
             if t_end<self.system.t+dt:
                 dt=t_end-self.system.t
             elif dt<self.dt_min:
-                raise Exception('Minimum dt exceeded')
+                raise Exception('Minimum dt exceeded') # TODO shouldnt raise base exception
             
             state=self.system.last_state()
             k1=dt*self.system.diff_eq(state)

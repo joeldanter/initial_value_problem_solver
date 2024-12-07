@@ -1,7 +1,7 @@
 import numpy as np
 import pygame
-from system import NBodyProblem
-from numeric_integrator import RKF
+from systems import NBodyProblem
+from numeric_iterators import RKF
 
 
 init_state=np.array((5.,0.,0.,1.,    0., 6., 0., -1.5,    -1., -2., 0., 0.,   30., 1., -10., 0.,     -5., 0., 0., -1.))
