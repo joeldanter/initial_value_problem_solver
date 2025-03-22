@@ -283,7 +283,7 @@ class NPendulum(System):
 
             V+=self.ms[i]*self.g*h
         
-        return T,V
+        return T+V
 
     def animate(self):
         pygame.init()
@@ -320,12 +320,9 @@ class NPendulum(System):
                 screen.blit(pendulum_surface, (0,0))
 
                 # texts
-                T,V=self.energy(state)
                 texts=[f't={time:0.3f}',
                 f'dt={time-states[state_i-1][0]:0.6f}',
-                f'T={T:0.8f}',
-                f'V={V:0.8f}',
-                f'E={T+V:0.8f}']
+                f'E={self.energy(state):0.8f}']
 
                 for text_i in range(len(texts)):
                     label=render_font.render(texts[text_i], True, 'white')
