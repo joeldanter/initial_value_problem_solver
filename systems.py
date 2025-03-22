@@ -125,7 +125,7 @@ class NBodyProblem(System):
         screen=pygame.display.set_mode(screen_size)
         trace_surface = pygame.surface.Surface(screen_size)
         bodies_surface = pygame.surface.Surface(screen_size).convert_alpha()
-        render_font=pygame.font.SysFont('monospace', 20)
+        render_font=pygame.font.SysFont('monospace', 40)
         starttime=pygame.time.get_ticks()
         
         states=self.states
@@ -163,7 +163,7 @@ class NBodyProblem(System):
 
                 for text_i in range(len(texts)):
                     label=render_font.render(texts[text_i], True, 'white')
-                    screen.blit(label, (5, 5+text_i*20))
+                    screen.blit(label, (10, 10+text_i*40))
 
                 # exit
                 pygame.display.update()
