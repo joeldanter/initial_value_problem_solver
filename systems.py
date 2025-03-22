@@ -3,6 +3,7 @@ import numpy as np
 from scipy.integrate import dblquad
 from abc import ABC, abstractmethod
 import scipy.optimize
+import pygame
 
 
 # TODO: terrible data structures
@@ -97,6 +98,45 @@ class NBodyProblem(System):
             res[i*4+2]=accels[i][0]
             res[i*4+3]=accels[i][1]        
         return res
+    
+    def animate(self):
+        pygame.init()
+        pygame.display.set_caption('n-body problem')
+        screen_size=np.array((1920, 1080))
+        screen=pygame.display.set_mode(screen_size)
+        starttime=pygame.time.get_ticks()
+        
+        states=self.states
+        colors=['red', 'green', 'blue', 'magenta', 'cyan', 'yellow']
+        lasti=0
+        for i in range(1, len(states)):
+            if states[i][0]-states[lasti][0]>=0.005:
+                for body in range(self.n):
+                    pos1=np.array((states[lasti][1][body*4], states[lasti][1][body*4+1]))
+                    pos2=np.array((states[i][1][body*4], states[i][1][body*4+1]))
+                    pos1*=50
+                    pos2*=50
+                    pos1[1]*=-1
+                    pos2[1]*=-1
+                    pos1+=np.array(screen_size/2)
+                    pos2+=np.array(screen_size/2)
+                    
+                    color=colors[body%len(colors)]
+                    pygame.draw.line(screen, color, pos1, pos2, 3)
+
+                pygame.display.update()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        return
+
+                real_t=pygame.time.get_ticks()-starttime
+                sim_t=states[i][0]*1000    
+                if (real_t<sim_t):
+                    pygame.time.wait(int(sim_t-real_t))
+                    
+                lasti=i
+        pygame.quit()
 
 class Lorenz(System):
     def __init__(self, init_state, sigma=10., rho=28., beta=8/3):
