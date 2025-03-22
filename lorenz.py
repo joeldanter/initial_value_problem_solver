@@ -5,17 +5,18 @@ import matplotlib.pyplot as plt
 
 
 init_state=np.array((1, 1, 2))
-integrators=[ExplicitEuler(Lorenz(init_state), dt=0.01),
-             ImplicitEuler(Lorenz(init_state), dt=0.01),
-             RK4(Lorenz(init_state), dt=0.01)]
+integrators=[ExplicitEuler(dt=0.01),
+             ImplicitEuler(dt=0.01),
+             RK4(dt=0.01)]
 colors='rgbmcy'
 
 fig, ax = plt.subplots(subplot_kw=dict(projection='3d'))
 for i in range(len(integrators)):
-    integrators[i].iterate_until(20)
+    system=Lorenz(init_state)
+    integrators[i].iterate_until(system, 5)
     x,y,z=[],[],[]
 
-    for state in integrators[i].system.states:
+    for state in system.states:
         x.append(state[1][0])
         y.append(state[1][1])
         z.append(state[1][2])
