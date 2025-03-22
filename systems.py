@@ -137,7 +137,7 @@ class NBodyProblem(System):
             if time-prev_time>=0.01: # make sure we can keep up
                 state=states[state_i][1]
                 prev_state=states[lasti][1]
-                
+
                 # traces
                 bodies_surface.fill((0,0,0,0))
                 for body in range(self.n):
@@ -263,6 +263,64 @@ class NPendulum(System):
     
     def phi(self, j, k):
         return j!=k
+    
+    def animate(self):
+        pygame.init()
+        pygame.display.set_caption('n-pendulum')
+        screen_size=np.array((1920, 1080))
+        screen=pygame.display.set_mode(screen_size)
+        trace_surface = pygame.surface.Surface(screen_size)
+        pendulum_surface = pygame.surface.Surface(screen_size).convert_alpha()
+        render_font=pygame.font.SysFont('monospace', 40)
+        starttime=pygame.time.get_ticks()
+        
+        states=self.states
+        lasti=0
+        for state_i in range(1, len(states)):
+            time=states[state_i][0]
+            prev_time=states[lasti][0]
+            if time-prev_time>=0.01: # make sure we can keep up
+                state=states[state_i][1]
+                prev_state=states[lasti][1]
+                
+                # pendulums and traces
+                pendulum_surface.fill((0,0,0,0))
+                prev_pos=screen_size/2
+                for point_i in range(self.n):
+                    theta=state[point_i]
+                    displacement=150*self.ls[point_i]*np.array((np.sin(theta), np.cos(theta)))
+                    pos=prev_pos+displacement
+                    pygame.draw.circle(pendulum_surface, 'white', pos, 10)
+                    pygame.draw.line(pendulum_surface, 'white', prev_pos, pos, 3)
+                    prev_pos=pos
+
+                #pygame.draw.line(trace_surface, 'red', prev_state, pos, 3)
+                screen.blit(trace_surface, (0,0))
+                screen.blit(pendulum_surface, (0,0))
+
+                # texts
+                texts=[f't={time:0.3f}',
+                f'dt={time-states[state_i-1][0]:0.6f}']
+
+                for text_i in range(len(texts)):
+                    label=render_font.render(texts[text_i], True, 'white')
+                    screen.blit(label, (10, 10+text_i*40))
+
+                # exit
+                pygame.display.update()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        return
+
+                # time
+                real_t=pygame.time.get_ticks()-starttime
+                sim_t=time*1000
+                if (real_t<sim_t):
+                    pygame.time.wait(int(sim_t-real_t))
+
+                lasti=state_i
+        pygame.quit()
 
 class TorusGravity(System):
     # TODO no clue if this works, havent tested at all
