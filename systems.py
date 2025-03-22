@@ -7,7 +7,6 @@ import pygame
 
 
 # TODO: terrible data structures
-# TODO: add energy calculations
 class System(ABC):
     def __init__(self, init_state):
         self.states=[(0, init_state)]
@@ -225,7 +224,6 @@ class DoublePendulum(System):
         return np.array((ang_vel1, ang_vel2, angular_accel1, angular_accel2))
 
 class NPendulum(System):
-    # TODO: not sure if this is right
     def __init__(self, init_state, n, ms, ls, g):
         super().__init__(init_state)
         self.n=n
