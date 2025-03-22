@@ -99,21 +99,50 @@ class NBodyProblem(System):
             res[i*4+3]=accels[i][1]        
         return res
     
+    def energy(self, state):
+        kinetic_E=0
+        for i in range(self.n):
+            v_x=state[i*4+2]
+            v_y=state[i*4+3]
+            v_sqr=v_x**2 + v_y**2
+            kinetic_E += self.massess[i] * v_sqr / 2 # 1/2*m*v^2
+        
+        potential_E=0
+        for i in range(self.n-1):
+            for j in range(i+1, self.n):
+                x1=state[i*4]
+                y1=state[i*4+1]
+                x2=state[j*4]
+                y2=state[j*4+1]
+                r=np.sqrt((x1-x2)**2+(y1-y2)**2)
+                potential_E += - self.grav_const * self.massess[i]*self.massess[j] / r
+        return potential_E,kinetic_E
+
     def animate(self):
         pygame.init()
         pygame.display.set_caption('n-body problem')
         screen_size=np.array((1920, 1080))
         screen=pygame.display.set_mode(screen_size)
+        trace_surface = pygame.surface.Surface(screen_size)
+        bodies_surface = pygame.surface.Surface(screen_size).convert_alpha()
+        render_font=pygame.font.SysFont('monospace', 20)
         starttime=pygame.time.get_ticks()
         
         states=self.states
         colors=['red', 'green', 'blue', 'magenta', 'cyan', 'yellow']
         lasti=0
-        for i in range(1, len(states)):
-            if states[i][0]-states[lasti][0]>=0.005:
+        for state_i in range(1, len(states)):
+            time=states[state_i][0]
+            state=states[state_i][1]
+            prev_time=states[lasti][0]
+            prev_state=states[lasti][1]
+            dt=time-prev_time
+            if dt>=0.0066: # 144Hz
+                # traces
+                bodies_surface.fill((0,0,0,0))
                 for body in range(self.n):
-                    pos1=np.array((states[lasti][1][body*4], states[lasti][1][body*4+1]))
-                    pos2=np.array((states[i][1][body*4], states[i][1][body*4+1]))
+                    pos1=np.array((prev_state[body*4], prev_state[body*4+1]))
+                    pos2=np.array((state[body*4], state[body*4+1]))
                     pos1*=50
                     pos2*=50
                     pos1[1]*=-1
@@ -122,20 +151,34 @@ class NBodyProblem(System):
                     pos2+=np.array(screen_size/2)
                     
                     color=colors[body%len(colors)]
-                    pygame.draw.line(screen, color, pos1, pos2, 3)
+                    pygame.draw.line(trace_surface, color, pos1, pos2, 3)
+                    pygame.draw.circle(bodies_surface, color, pos2, 10)
+                screen.blit(trace_surface, (0,0))
+                screen.blit(bodies_surface, (0,0))
 
+                # texts
+                texts=[f't={time:0.3f}',
+                f'dt={dt:0.6f}',
+                f'E={sum(self.energy(state)):0.8f}']
+
+                for text_i in range(len(texts)):
+                    label=render_font.render(texts[text_i], True, 'white')
+                    screen.blit(label, (5, 5+text_i*20))
+
+                # exit
                 pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         return
 
+                # time
                 real_t=pygame.time.get_ticks()-starttime
-                sim_t=states[i][0]*1000    
+                sim_t=time*1000
                 if (real_t<sim_t):
                     pygame.time.wait(int(sim_t-real_t))
-                    
-                lasti=i
+
+                lasti=state_i
         pygame.quit()
 
 class Lorenz(System):
