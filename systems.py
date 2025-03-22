@@ -136,8 +136,7 @@ class NBodyProblem(System):
             state=states[state_i][1]
             prev_time=states[lasti][0]
             prev_state=states[lasti][1]
-            dt=time-prev_time
-            if dt>=0.0066: # 144Hz
+            if time-prev_time>=0.01: # make sure we can keep up
                 # traces
                 bodies_surface.fill((0,0,0,0))
                 for body in range(self.n):
@@ -158,7 +157,7 @@ class NBodyProblem(System):
 
                 # texts
                 texts=[f't={time:0.3f}',
-                f'dt={dt:0.6f}',
+                f'dt={time-states[state_i-1][0]:0.6f}',
                 f'E={sum(self.energy(state)):0.8f}']
 
                 for text_i in range(len(texts)):
