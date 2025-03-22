@@ -9,7 +9,7 @@ import scipy.optimize
 # TODO: add energy calculations
 class System(ABC):
     def __init__(self, init_state):
-        self.states=[[0, init_state]]
+        self.states=[(0, init_state)]
         self.t=0
 
     @abstractmethod
