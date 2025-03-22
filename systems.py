@@ -116,7 +116,7 @@ class NBodyProblem(System):
                 y2=state[j*4+1]
                 r=np.sqrt((x1-x2)**2+(y1-y2)**2)
                 potential_E += - self.grav_const * self.massess[i]*self.massess[j] / r
-        return potential_E,kinetic_E
+        return potential_E+kinetic_E
 
     def animate(self):
         pygame.init()
@@ -159,7 +159,7 @@ class NBodyProblem(System):
                 # texts
                 texts=[f't={time:0.3f}',
                 f'dt={time-states[state_i-1][0]:0.6f}',
-                f'E={sum(self.energy(state)):0.8f}']
+                f'E={self.energy(state):0.8f}']
 
                 for text_i in range(len(texts)):
                     label=render_font.render(texts[text_i], True, 'white')
@@ -264,6 +264,27 @@ class NPendulum(System):
     def phi(self, j, k):
         return j!=k
     
+    def energy(self, state):
+        T=0
+        V=0
+        for i in range(self.n):
+            vx=0
+            vy=0
+            h=0
+            for j in range(i+1):
+                theta=state[j]
+                omega=state[self.n+j]
+                vx += np.cos(theta)*omega*self.ls[j]
+                vy += np.sin(theta)*omega*self.ls[j]
+
+                h-=self.ls[j]*np.cos(theta)
+            v_sqr= vx**2 + vy**2
+            T+= 1/2 * self.ms[i] * v_sqr
+
+            V+=self.ms[i]*self.g*h
+        
+        return T,V
+
     def animate(self):
         pygame.init()
         pygame.display.set_caption('n-pendulum')
@@ -299,8 +320,12 @@ class NPendulum(System):
                 screen.blit(pendulum_surface, (0,0))
 
                 # texts
+                T,V=self.energy(state)
                 texts=[f't={time:0.3f}',
-                f'dt={time-states[state_i-1][0]:0.6f}']
+                f'dt={time-states[state_i-1][0]:0.6f}',
+                f'T={T:0.8f}',
+                f'V={V:0.8f}',
+                f'E={T+V:0.8f}']
 
                 for text_i in range(len(texts)):
                     label=render_font.render(texts[text_i], True, 'white')
