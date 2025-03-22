@@ -133,10 +133,11 @@ class NBodyProblem(System):
         lasti=0
         for state_i in range(1, len(states)):
             time=states[state_i][0]
-            state=states[state_i][1]
             prev_time=states[lasti][0]
-            prev_state=states[lasti][1]
             if time-prev_time>=0.01: # make sure we can keep up
+                state=states[state_i][1]
+                prev_state=states[lasti][1]
+                
                 # traces
                 bodies_surface.fill((0,0,0,0))
                 for body in range(self.n):
