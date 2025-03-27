@@ -1,6 +1,7 @@
 import numpy as np
 from systems import VanDerPol
 from ivp_solvers import RKF, RK4, RK2, ExplicitEuler, ImplicitEuler
+import matplotlib
 import matplotlib.pyplot as plt
 
 
@@ -12,6 +13,9 @@ solver_names=['Explicit euler dt=0.01',
               'Implicit euler dt=0.01',
               'Runge-Kutta 4 dt=0.01']
 colors='rgbmcy'
+font = {'family' : 'normal',
+        'size'   : 14}
+matplotlib.rc('font', **font)
 
 fig, ax = plt.subplots()
 for i in range(len(solvers)):
