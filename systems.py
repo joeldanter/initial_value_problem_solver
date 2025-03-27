@@ -34,6 +34,12 @@ class HarmonicOscillator(System):
         v=state[1]
         a=-self.k*x
         return np.array((v, a))
+    
+    def energy(self, state):
+        x,v=state[0],state[1]
+        potential_E=self.k * x**2 / 2
+        kinetic_E=v**2 / 2
+        return potential_E+kinetic_E
 
 class VanDerPol(System):
     def __init__(self, init_state, mu=0.5):
