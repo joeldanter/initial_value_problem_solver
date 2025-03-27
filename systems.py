@@ -35,6 +35,18 @@ class HarmonicOscillator(System):
         a=-self.k*x
         return np.array((v, a))
 
+class VanDerPol(System):
+    def __init__(self, init_state, mu=0.5):
+        super().__init__(init_state)
+        self.mu=mu
+
+    def diff_eq(self, state):
+        #x,v
+        x=state[0]
+        v=state[1]
+        a= self.mu *(1 - x**2)* v - x
+        return np.array((v,a))
+
 class NBodyProblem(System):
     def __init__(self, init_state, n, masses, grav_const=1):
         super().__init__(init_state)
