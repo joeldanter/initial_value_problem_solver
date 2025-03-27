@@ -8,9 +8,9 @@ init_state=np.array((2, 0))
 solvers=[ExplicitEuler(dt=0.01),
              ImplicitEuler(dt=0.01),
              RK4(dt=0.01)]
-solver_names=['Explicit euler',
-              'Implicit euler',
-              'Runge-Kutta 4']
+solver_names=['Explicit euler dt=0.01',
+              'Implicit euler dt=0.01',
+              'Runge-Kutta 4 dt=0.01']
 colors='rgbmcy'
 
 fig, ax = plt.subplots()
